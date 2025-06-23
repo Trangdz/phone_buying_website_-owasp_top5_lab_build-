@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\ShoppingCart;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Comment;
+use Illuminate\Support\Facades\DB;
 
 use function PHPUnit\Framework\returnCallback;
 
@@ -19,8 +21,8 @@ class ShoppingController extends Controller
         return view('user.home',compact('telephones'));
     }
     public function detail($id){
-        $telephone=Telephone::find($id);
-        return view('user.detail',compact('telephone'));
+        $telephone = Telephone::with('comments.user')->findOrFail($id);
+        return view('user.detail', compact('telephone'));
     }
 
     public function order($id){
@@ -112,5 +114,87 @@ class ShoppingController extends Controller
             ]);
         }
         return redirect()->back()->with('success', 'Đã thêm vào giỏ hàng!');
+    }
+
+    public function storeComment(Request $request, $id)
+    {
+        $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $user = Auth::user();
+        
+        Comment::create([
+            'user_id' => $user->id,
+            'telephone_id' => $id,
+            'content' => $request->content,
+        ]);
+
+        // Redirect về trang detail với dữ liệu mới
+        return redirect()->route('user.detail', $id)->with('success', 'Comment đã được thêm thành công!');
+    }
+
+    public function deleteComment($commentId)
+    {
+        $user = Auth::user();
+        $comment = Comment::where('id', $commentId)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+        
+        $comment->delete();
+        
+        return redirect()->back()->with('success', 'Comment đã được xóa!');
+    }
+
+    public function searchComments(Request $request)
+    {
+        $search = $request->input('search', '');
+        
+        if (empty($search)) {
+            $comments = [];
+            return view('user.search-comments', compact('comments', 'search'));
+        }
+        
+        // Lỗ hổng SQL Injection - sử dụng raw query không parameterized
+        $query="
+            SELECT c.*, u.name as user_name, t.name as telephone_name 
+            FROM comments c 
+            JOIN users u ON c.user_id = u.id 
+            JOIN telephones t ON c.telephone_id = t.id 
+            WHERE c.content LIKE '%{$search}%' 
+            ORDER BY c.created_at DESC
+        ";
+        // dd($query);
+        $comments = DB::select($query);
+        
+        return view('user.search-comments', compact('comments', 'search'));
+    }
+
+    public function getCommentsByUser(Request $request)
+    {
+        $userId = $request->input('user_id', '');
+        
+        if (empty($userId)) {
+            $comments = [];
+            return view('user.user-comments', compact('comments', 'userId'));
+        }
+        
+        // Lỗ hổng SQL Injection - sử dụng raw query không parameterized
+        // Thêm kiểm tra để tránh lỗi khi user_id không phải số
+        if (!is_numeric($userId)) {
+            $comments = [];
+            return view('user.user-comments', compact('comments', 'userId'));
+        }
+        
+        $comments = DB::select("
+            SELECT c.*, u.name as user_name, t.name as telephone_name 
+            FROM comments c 
+            JOIN users u ON c.user_id = u.id 
+            JOIN telephones t ON c.telephone_id = t.id 
+            WHERE c.user_id = {$userId}
+            ORDER BY c.created_at DESC
+        ");
+        
+        return view('user.user-comments', compact('comments', 'userId'));
     }
 }
