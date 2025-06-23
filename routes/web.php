@@ -12,6 +12,9 @@ use App\Http\Controllers\User\ShoppingController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 // Route::get('/ssti-demo', [DemoSSTIController::class, 'showForm']);
 // Route::post('/ssti-demo', [DemoSSTIController::class, 'renderTemplate']);
 Auth::routes();
