@@ -6,7 +6,7 @@
     <!-- Page Heading -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">{{ $pageTitle ?? 'Users List' }}</h1>
-        <a href="{{route('admin.telephones.add')}}" class="btn btn-primary">Add New User</a>
+        <a href="{{route('admin.users.add')}}" class="btn btn-primary">Add New User</a>
        
     </div>
 

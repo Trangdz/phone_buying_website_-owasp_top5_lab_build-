@@ -13,6 +13,7 @@ class TelephoneController extends Controller
 {
       //
       public function index(){
+        
         $pageTitle="Telephone list";
         $telephones=Telephone::all();
         return view('admin.telephones.lists',compact('pageTitle','telephones'));
@@ -74,17 +75,18 @@ class TelephoneController extends Controller
             $fileName = $file->getClientOriginalName();
             $extension = strtolower($file->getClientOriginalExtension());
     
-            // ✅ 1. Lưu file tạm vào storage/app/public/temp
+            // Lưu file tạm vào storage/app/public/temp
             $tempPath = $file->storeAs('public/temp', $fileName);
     
-            // ✅ 2. Lấy đường dẫn public để attacker có thể truy cập
+            // Lấy đường dẫn public để attacker có thể truy cập
             $publicTempUrl = asset('storage/temp/' . $fileName);
             logger("File temporarily saved at: $publicTempUrl");
-    // dd($publicTempUrl);
-            // ✅ 3. Giữ lại file 5 giây để attacker kịp truy cập trước khi xử lý
-            sleep(5);
+            // dd($publicTempUrl);
+ 
+            //  Giữ lại file 5 giây để attacker kịp truy cập trước khi xử lý
+            // sleep(5);
     
-            // ✅ 4. Kiểm tra extension
+            //  Kiểm tra extension
             if ($this->checkFileType($extension)) {
                 // Di chuyển sang thư mục chính thức
                 $finalPath = $file->store('products', 'public');
