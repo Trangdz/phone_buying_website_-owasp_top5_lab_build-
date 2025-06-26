@@ -63,11 +63,11 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        // LỖ HỔNG: Cho phép mass assignment, attacker có thể chèn role, balance, ...
+        // Loại bỏ password_confirmation và hash password
+        unset($data['password_confirmation']);
+        $data['password'] = Hash::make($data['password']);
+        return User::create($data);
     }
 
     protected function registered(\Illuminate\Http\Request $request, $user)

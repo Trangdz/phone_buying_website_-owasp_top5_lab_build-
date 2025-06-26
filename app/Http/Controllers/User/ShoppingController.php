@@ -176,7 +176,7 @@ class ShoppingController extends Controller
         // dd($query);
         $comments = DB::select($query);
         
-        return view('user.search-comments', compact('comments', 'search'));
+        return view('user.search-comments', compact('comments', 'search','id'));
     }
 
     public function getCommentsByUser(Request $request,$tId)

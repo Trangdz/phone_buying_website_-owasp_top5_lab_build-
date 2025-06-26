@@ -151,7 +151,7 @@
             alertDiv.className = 'alert alert-warning text-center mt-4';
             alertDiv.innerHTML = `
                 <img src="/storage/asset/nothingi.jpg?searchTerms=${(query)}"
-                     alt="Không tìm thấy kết quả" style="max-width:300px;" class="img-fluid my-3">    
+                     alt="Không tìm thấy kết quả ${(query)}" style="max-width:300px;" class="img-fluid my-3">    
             `;
     
             document.querySelector('.card-body')?.appendChild(alertDiv);

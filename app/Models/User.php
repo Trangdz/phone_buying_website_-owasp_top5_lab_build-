@@ -46,6 +46,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $guarded = [];
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
