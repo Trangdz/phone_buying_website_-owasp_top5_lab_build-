@@ -1,4 +1,4 @@
-@extends('layouts.admin.app_admin') {{-- Hoặc layouts.admin tùy cấu trúc của bạn --}}
+@extends('layouts.app_admin') {{-- Hoặc layouts.admin tùy cấu trúc của bạn --}}
 
 @section('title', 'Thông tin cá nhân')
 

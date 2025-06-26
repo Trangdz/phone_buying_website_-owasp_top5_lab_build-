@@ -78,7 +78,7 @@
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('admin.auth.profile') }}">
+                                        <a class="dropdown-item" href="{{ route('user.auth.profile') }}">
                                             Profile
                                         </a>
                                         {{-- <a class="dropdown-item" href="{{ route('admin.auth.change-password') }}">

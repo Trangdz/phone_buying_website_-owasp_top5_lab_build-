@@ -3,11 +3,13 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TelephoneController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\User\UserController as ProfileUserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\DemoSSTIController;
 use App\Http\Controllers\User\ShoppingController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController as ManagementUserController;
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -26,11 +28,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     // Auth group: /admin/auth/*
     Route::prefix('auth')->name('auth.')->group(function () {
-        Route::get('/profile', [ProfileController::class, 'profile'])->name('profile');    
-        Route::post('/update-profile',[ProfileController::class,'updateProfile'])->name('update-profile');
+        Route::get('/profile', [AdminController::class, 'profile'])->name('profile');    
+        Route::post('/update-profile',[AdminController::class,'updateProfile'])->name('update-profile');
         // Tên route: admin.auth.profile
 
-        Route::get('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
+        Route::get('/change-password', [AdminController::class, 'changePassword'])->name('change-password');
+        Route::post('/change-password', [AdminController::class, 'postChangePassword'])->name('post-ChangePassword');
         // Tên route: admin.auth.change-password
     });
 
@@ -48,18 +51,29 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         // Tên route: admin.posts.edit
     });
 
+
     Route::prefix('users')->name('users.')->group(function(){
-        Route::get('/',[UserController::class,'index'])->name('index');
-        Route::get('/add',[UserController::class,'add'])->name('add');
-        Route::post('/add',[UserController::class,'postAdd'])->name('postAdd');
-        Route::get('/edit/{id}',[UserController::class,'edit'])->name('edit');
-        Route::post('/edit/{id}',[UserController::class,'postEdit'])->name('postEdit');
-        Route::get('/delete/{id}',[UserController::class,'delete'])->name('delete');
+        Route::get('/',[ManagementUserController::class,'index'])->name('index');
+        Route::get('/add',[ManagementUserController::class,'add'])->name('add');
+        Route::post('/add',[ManagementUserController::class,'postAdd'])->name('postAdd');
+        Route::get('/edit/{id}',[ManagementUserController::class,'edit'])->name('edit');
+        Route::post('/edit/{id}',[ManagementUserController::class,'postEdit'])->name('postEdit');
+        Route::get('/delete/{id}',[ManagementUserController::class,'delete'])->name('delete');
     });
 
 });
 
 Route::prefix('user')->name('user.')->middleware('auth')->group(function(){
+    //Authentication
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::get('/profile', [ProfileUserController::class, 'profile'])->name('profile');    
+        Route::post('/update-profile',[ProfileUserController::class,'updateProfile'])->name('update-profile');
+        // Tên route: admin.auth.profile
+        Route::post('/change-password', [ProfileUserController::class, 'postChangePassword'])->name('post-ChangePassword');
+        Route::get('/change-password', [ProfileUserController::class, 'changePassword'])->name('change-password');
+        // Tên route: admin.auth.change-password
+    });
+
     Route::get('/',[ShoppingController::class,'index'])->name('index');
     Route::get('/detail/{id}',[ShoppingController::class,'detail'])->name('detail');
     Route::get('/order/{id}',[ShoppingController::class,'order'])->name('order');

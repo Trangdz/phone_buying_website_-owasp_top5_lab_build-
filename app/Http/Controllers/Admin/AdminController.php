@@ -1,48 +1,55 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Admin;
 
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Auth;
+use App\Models\User;
+use Hash;
+use function Laravel\Prompts\password;
 
-class UserController extends Controller
+// This controller have purpose to manage admin's profile
+
+class AdminController extends Controller
 {
     public function index()
     {
-        return 'User';
+        return 'Admin';
     }
 
     public function profile()
     {
-       
         $pageTitle = "Profile";
         $id = Auth::user()->id;
         $user = User::find($id);
-        // dd($user);
-
-        return view('user.auth.profile.show', compact('pageTitle', 'user'));
+        return view('admin.auth.profile.show', compact('pageTitle', 'user'));
     }
 
     public function changePassword()
     {
-        return view('user.auth.passwords.change');
+
+        return view('admin.auth.passwords.change');
     }
+
     public function postChangePassword(Request $request)
     {
-        $id = Auth::user()->id;
-        $user = User::findOrFail($id);
         $request->validate([
             'old_password' => 'required',
-            'new_password' => 'required|min:6',
+            'new_password' => 'required|min:8|confirmed',  // `confirmed` để yêu cầu trường `new_password_confirmation`
         ]);
-        if (!Hash::check($request->old_password, $user->password)) {
-            return redirect()->route('user.auth.change-password')->with('error', 'Mật khẩu hiện tại không đúng.');
+    
+        // Kiểm tra mật khẩu cũ
+        if (!Hash::check($request->old_password, auth()->user()->password)) {
+            return redirect()->route('admin.auth.change-password')->with('error', 'Mật khẩu hiện tại không đúng.');
         }
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-        return redirect()->route('user.auth.profile')->with('success', 'Mật khẩu đã được cập nhật thành công!');
+    
+        // Cập nhật mật khẩu mới
+        auth()->user()->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+    
+        return redirect()->route('admin.auth.change-password')->with('success', 'Mật khẩu đã được cập nhật.');
     }
 
     public function updateProfile(Request $request)

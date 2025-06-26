@@ -69,9 +69,7 @@
                                         <a class="dropdown-item" href="{{ route('admin.auth.profile') }}">
                                             Profile
                                         </a>
-                                        <a class="dropdown-item" href="{{ route('admin.auth.change-password') }}">
-                                            Change Password
-                                        </a>
+                                        <a href="{{ route('admin.auth.change-password') }}" class="btn btn-outline-primary">Change password</a>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             Log out

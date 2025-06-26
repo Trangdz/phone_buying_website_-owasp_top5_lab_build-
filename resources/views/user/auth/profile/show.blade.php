@@ -1,4 +1,4 @@
-@extends('layouts.admin.app_admin') {{-- Hoặc layouts.admin tùy cấu trúc của bạn --}}
+@extends('layouts.user.app_user') {{-- Hoặc layouts.admin tùy cấu trúc của bạn --}}
 
 @section('title', 'Thông tin cá nhân')
 
@@ -15,7 +15,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.auth.update-profile') }}" method="POST">
+            <form action="{{ route('user.auth.update-profile') }}" method="POST">
                 @csrf
                 @method('POST')
 
@@ -37,7 +37,7 @@
 
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">Cập nhật</button>
-                    <a href="{{ route('admin.auth.change-password') }}" class="btn btn-outline-primary">Đổi mật khẩu</a>
+                    <a href="{{ route('user.auth.change-password') }}" class="btn btn-outline-primary">Đổi mật khẩu</a>
                 </div>
             </form>
         </div>
