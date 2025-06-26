@@ -170,7 +170,7 @@ class ShoppingController extends Controller
             FROM comments c 
             JOIN users u ON c.user_id = u.id 
             JOIN telephones t ON c.telephone_id = t.id 
-            WHERE c.content LIKE '%{$search}%' 
+            WHERE c.content LIKE '((%{$search}%))' 
             ORDER BY c.created_at DESC
         ";
         // dd($query);
@@ -200,7 +200,7 @@ class ShoppingController extends Controller
             FROM comments c 
             JOIN users u ON c.user_id = u.id 
             JOIN telephones t ON c.telephone_id = t.id 
-            WHERE c.user_id = {$userId}
+            WHERE c.user_id = ({$userId})
             ORDER BY c.created_at DESC
         ");
         
