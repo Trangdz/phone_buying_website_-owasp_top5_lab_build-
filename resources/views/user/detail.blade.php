@@ -37,8 +37,8 @@
                 <div class="card-header">
                     <h4>Bình luận ({{ $telephone->comments->count() }})</h4>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('user.search-comments') }}" class="btn btn-sm btn-outline-primary">Tìm kiếm bình luận</a>
-                        <a href="{{ route('user.user-comments') }}" class="btn btn-sm btn-outline-secondary">Lấy comment theo user</a>
+                        <a href="{{ route('user.search-comments',$telephone->id) }}" class="btn btn-sm btn-outline-primary">Tìm kiếm bình luận</a>
+                        <a href="{{ route('user.user-comments',$telephone->id) }}" class="btn btn-sm btn-outline-secondary">Lấy comment theo user</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -92,14 +92,18 @@
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center text-muted py-4">
+                        <div class="text-center text-muted py-4 no-comments-flag">
                             <p>Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>
                         </div>
                     @endif
+                   
                 </div>
+                
             </div>
         </div>
     </div>
 </div>
+
+<!-- JS xử lý search -->
 
 @endsection

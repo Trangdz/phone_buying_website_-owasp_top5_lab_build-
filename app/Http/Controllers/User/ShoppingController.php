@@ -123,11 +123,20 @@ class ShoppingController extends Controller
         ]);
 
         $user = Auth::user();
-        
+        // Chặn các thẻ script, h1, img, svg
+        $blockedTags = ['script', 'h1', 'img', 'svg'];
+        $content = $request->content;
+        $content = strip_tags($content, null); // Loại bỏ toàn bộ HTML
+        // Đảm bảo loại bỏ các tag bị encode hoặc viết hoa
+        foreach ($blockedTags as $tag) {
+            $pattern = '/<\s*' . $tag . '[^>]*>(.*?)<\s*\/\s*' . $tag . '\s*>/is';
+            $content = preg_replace($pattern, '', $content);
+        }
+
         Comment::create([
             'user_id' => $user->id,
             'telephone_id' => $id,
-            'content' => $request->content,
+            'content' => $content,
         ]);
 
         // Redirect về trang detail với dữ liệu mới
@@ -146,13 +155,13 @@ class ShoppingController extends Controller
         return redirect()->back()->with('success', 'Comment đã được xóa!');
     }
 
-    public function searchComments(Request $request)
+    public function searchComments(Request $request,$id)
     {
         $search = $request->input('search', '');
-        
+      
         if (empty($search)) {
             $comments = [];
-            return view('user.search-comments', compact('comments', 'search'));
+            return view('user.search-comments', compact('comments', 'search','id'));
         }
         
         // Lỗ hổng SQL Injection - sử dụng raw query không parameterized
@@ -170,20 +179,20 @@ class ShoppingController extends Controller
         return view('user.search-comments', compact('comments', 'search'));
     }
 
-    public function getCommentsByUser(Request $request)
+    public function getCommentsByUser(Request $request,$tId)
     {
         $userId = $request->input('user_id', '');
-        
+        // dd($id);
         if (empty($userId)) {
             $comments = [];
-            return view('user.user-comments', compact('comments', 'userId'));
+            return view('user.user-comments', compact('comments', 'userId', 'tId'));
         }
         
         // Lỗ hổng SQL Injection - sử dụng raw query không parameterized
         // Thêm kiểm tra để tránh lỗi khi user_id không phải số
         if (!is_numeric($userId)) {
             $comments = [];
-            return view('user.user-comments', compact('comments', 'userId'));
+            return view('user.user-comments', compact('comments', 'userId', 'tId'));
         }
         
         $comments = DB::select("
@@ -195,6 +204,6 @@ class ShoppingController extends Controller
             ORDER BY c.created_at DESC
         ");
         
-        return view('user.user-comments', compact('comments', 'userId'));
+        return view('user.user-comments', compact('comments', 'userId','tId'));
     }
 }

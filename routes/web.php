@@ -71,6 +71,6 @@ Route::prefix('user')->name('user.')->middleware('auth')->group(function(){
     // Comment routes
     Route::post('/detail/{id}/comment',[ShoppingController::class,'storeComment'])->name('store-comment');
     Route::delete('/comment/{id}',[ShoppingController::class,'deleteComment'])->name('delete-comment');
-    Route::get('/search-comments',[ShoppingController::class,'searchComments'])->name('search-comments');
-    Route::get('/user-comments',[ShoppingController::class,'getCommentsByUser'])->name('user-comments');
+    Route::get('/search-comments/{id}',[ShoppingController::class,'searchComments'])->name('search-comments');
+    Route::get('/user-comments/{id}',[ShoppingController::class,'getCommentsByUser'])->name('user-comments');
 });

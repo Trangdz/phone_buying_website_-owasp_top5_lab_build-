@@ -47,7 +47,11 @@
                                 </li>
                             @endif
                         @else
+
                             <li class="nav-item d-flex align-items-center">
+                                <a class="nav-link position-relative me-2" href="{{route('user.index')}}">
+                                    Home
+                                 </a>
                                 {{-- Giỏ hàng --}}
                                 <a class="nav-link position-relative me-2" href="{{route('user.cart')}}">
                                     🛒Shopping cart
@@ -65,6 +69,7 @@
                                         </span>
                                     @endif --}}
                                 </a>
+                                
                                 {{-- Tên người dùng & menu --}}
                                 <div class="dropdown">
                                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
@@ -76,9 +81,9 @@
                                         <a class="dropdown-item" href="{{ route('admin.auth.profile') }}">
                                             Profile
                                         </a>
-                                        <a class="dropdown-item" href="{{ route('admin.auth.change-password') }}">
+                                        {{-- <a class="dropdown-item" href="{{ route('admin.auth.change-password') }}">
                                             Change Password
-                                        </a>
+                                        </a> --}}
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             Log out
@@ -106,4 +111,54 @@
         </div> --}}
     </div>
 </body>
+{{-- <script>
+    function trackSearch(query) {
+        document.write('<img src="/resources/images/tracker.gif?searchTerms='+query+'">');
+    }
+    var query = (new URLSearchParams(window.location.search)).get('search');
+    if(query) {
+        trackSearch(query);
+    }
+</script> --}}
+{{-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const query = (new URLSearchParams(window.location.search)).get('search');
+
+        if (query) {
+            const hasComments = document.querySelector('.comments-list');
+            if (!hasComments) {
+                const warning = document.createElement('div');
+                warning.className = 'alert alert-warning mt-4 text-center';
+                warning.textContent = '<img src="../../../image/nothingi.jpg?searchTerms=' + query + '">';
+
+                const container = document.querySelector('.card-body');
+                if (container) {
+                    container.appendChild(warning);
+                }
+                // document.write('<img src="../../../image/nothingi.jpg?searchTerms=' + encodeURIComponent(query) + '">');
+                
+            }
+        }
+    });
+</script> --}}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const query = new URLSearchParams(window.location.search).get('search');
+        const commentsExist = document.querySelector('.comments-list');
+    
+        if (query && !commentsExist) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-warning text-center mt-4';
+            alertDiv.innerHTML = `
+                <img src="/storage/asset/nothingi.jpg?searchTerms=${(query)}"
+                     alt="Không tìm thấy kết quả" style="max-width:300px;" class="img-fluid my-3">    
+            `;
+    
+            document.querySelector('.card-body')?.appendChild(alertDiv);
+        }
+    });
+    </script>
+    
+
+
 </html>

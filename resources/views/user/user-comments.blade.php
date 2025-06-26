@@ -10,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <!-- User ID Form -->
-                    <form method="GET" action="{{ route('user.user-comments') }}" class="mb-4">
+                    <form method="GET" action="{{ route('user.user-comments',$tId) }}" class="mb-4">
                         <div class="input-group">
                             <input type="text" class="form-control" name="user_id" 
                                    value="{{ $userId ?? '' }}" placeholder="Nhập User ID...">
@@ -50,6 +50,17 @@
                             </div> --}}
                         @endif
                     @endif
+                    <div class="text-center mt-5">
+                        @if(isset($tId))
+                            <a href="{{ route('user.detail', $tId) }}" class="btn btn-outline-dark">
+                                ← Quay lại trang chi tiết
+                            </a>
+                        @else
+                            <a href="/" class="btn btn-outline-dark">
+                                ← Quay lại trang chủ
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
