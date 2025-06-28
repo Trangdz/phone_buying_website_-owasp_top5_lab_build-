@@ -49,27 +49,30 @@
                         @else
                             <li class="nav-item d-flex align-items-center">
                                 {{-- Giỏ hàng --}}
-                                <a class="nav-link position-relative me-2" href="#">
+                                {{-- <a class="nav-link position-relative me-2" href="#">
                                     🛒Shopping cart
                                     @if(session('cart') && count(session('cart')) > 0)
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                             {{ count(session('cart')) }}
                                         </span>
                                     @endif
-                                </a>
+                                </a> --}}
 
                                 {{-- Tên người dùng & menu --}}
                                 <div class="dropdown">
                                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                        {{ Auth::user()->name }}
+                                        {!! Auth::user()->name !!}
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item" href="{{ route('admin.auth.profile') }}">
                                             Profile
                                         </a>
-                                        <a href="{{ route('admin.auth.change-password') }}" class="btn btn-outline-primary">Change password</a>
+                                        <a class="dropdown-item" href="{{route('admin.auth.change-password') }}">
+                                            Change password
+                                        </a>
+                                        
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             Log out

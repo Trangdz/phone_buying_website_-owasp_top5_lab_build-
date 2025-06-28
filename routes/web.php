@@ -20,7 +20,7 @@ Route::get('/', function () {
 // Route::get('/ssti-demo', [DemoSSTIController::class, 'showForm']);
 // Route::post('/ssti-demo', [DemoSSTIController::class, 'renderTemplate']);
 Auth::routes();
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
 
     // Dashboard: /admin/
     Route::get('/', [DashboardController::class, 'index'])->name('index'); 
@@ -63,7 +63,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
 });
 
-Route::prefix('user')->name('user.')->middleware('auth')->group(function(){
+Route::prefix('user')->name('user.')->middleware(['auth','user'])->group(function(){
     //Authentication
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/profile', [ProfileUserController::class, 'profile'])->name('profile');    
