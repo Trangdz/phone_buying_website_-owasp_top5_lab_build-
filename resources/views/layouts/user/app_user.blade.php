@@ -150,8 +150,8 @@
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-warning text-center mt-4';
             alertDiv.innerHTML = `
-                <img src="/storage/asset/nothingi.jpg?searchTerms=${(query)}"
-                     alt="Không tìm thấy kết quả ${(query)}" style="max-width:300px;" class="img-fluid my-3">    
+                <img src="/storage/asset/nothingi.jpg"
+                     alt="Không tìm thấy kết quả ${(query)}">    
             `;
     
             document.querySelector('.card-body')?.appendChild(alertDiv);

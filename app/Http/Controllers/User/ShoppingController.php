@@ -190,19 +190,21 @@ class ShoppingController extends Controller
         
         // Lỗ hổng SQL Injection - sử dụng raw query không parameterized
         // Thêm kiểm tra để tránh lỗi khi user_id không phải số
-        if (!is_numeric($userId)) {
-            $comments = [];
-            return view('user.user-comments', compact('comments', 'userId', 'tId'));
-        }
-        
-        $comments = DB::select("
+        // if (!is_numeric($userId)) {
+        //     $comments = [];
+        //     return view('user.user-comments', compact('comments', 'userId', 'tId'));
+        // }
+       $query = "
             SELECT c.*, u.name as user_name, t.name as telephone_name 
             FROM comments c 
             JOIN users u ON c.user_id = u.id 
             JOIN telephones t ON c.telephone_id = t.id 
             WHERE c.user_id = ({$userId})
-            ORDER BY c.created_at DESC
-        ");
+           
+        ";
+        // dd($query);
+        $comments = DB::select($query);
+        
         
         return view('user.user-comments', compact('comments', 'userId','tId'));
     }
