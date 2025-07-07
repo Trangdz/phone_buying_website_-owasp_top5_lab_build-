@@ -74,34 +74,48 @@ class TelephoneController extends Controller
             $file = $request->file('image');
             $fileName = $file->getClientOriginalName();
             $extension = strtolower($file->getClientOriginalExtension());
-    
-            // Lưu file tạm vào storage/app/public/temp
-            $tempPath = $file->storeAs('public/temp', $fileName);
-    
-            // Lấy đường dẫn public để attacker có thể truy cập
-            $publicTempUrl = asset('storage/temp/' . $fileName);
+            
+            // Tạo tên file mới với timestamp (giống như code PHP)
+            $timestamp = time();
+            $filename = pathinfo($fileName, PATHINFO_FILENAME);
+            $newName = $filename . '_' . $timestamp . '.' . $extension;
+            
+            // Lưu file tạm vào thư mục public/temp (giống như $uploadpath = "tmp/")
+            $uploadPath = "public/temp/";
+            $tempPath = $file->storeAs($uploadPath, $newName);
+            $uploadDir = storage_path('app/' . $uploadPath . $newName);
+            
+            // Tạo URL public để attacker có thể truy cập
+            $publicTempUrl = asset('storage/temp/' . $newName);
             logger("File temporarily saved at: $publicTempUrl");
-            // dd($publicTempUrl);
- 
-            //  Giữ lại file 5 giây để attacker kịp truy cập trước khi xử lý
-            // sleep(5);
-    
-            //  Kiểm tra extension
-            if ($this->checkFileType($extension)) {
-                // Di chuyển sang thư mục chính thức
-                $finalPath = $file->store('products', 'public');
-                $telePhone->image = $finalPath;
-    
-                // Xóa file tạm
-                Storage::delete($tempPath);
+            
+            // Kiểm tra kích thước file (10MB) - giống như code PHP
+            if ($file->getSize() <= 10485760) {
+                // ✅ RACE CONDITION: File được lưu tạm và có thể truy cập ngay
+                // Attacker có thể truy cập file trong khoảng thời gian này
+                
+                // Kiểm tra extension (chỉ kiểm tra extension, không kiểm tra content)
+                if ($this->checkFileType($extension)) {
+                    // Lưu ảnh mới vào thư mục chính thức
+                    $finalPath = $file->store('products', 'public');
+                    $telePhone->image = $finalPath;
+                    
+                    session()->flash('success', 'Thêm sản phẩm thành công! File đã được xử lý an toàn.');
+                } else {
+                    session()->flash('error', 'Định dạng file không được hỗ trợ!');
+                }
             } else {
-                Storage::delete($tempPath);
-                return response("File bị từ chối. Nhưng có thể đã bị truy cập trước đó nếu bạn nhanh tay ;)", 400);
+                session()->flash('error', 'Kích thước file lớn hơn mức cho phép (10MB)');
             }
+            
+            // ✅ RACE CONDITION: Xóa file tạm ngay lập tức (giống như unlink($upload_dir))
+            // Đây chính là điểm tạo ra race condition!
+            Storage::delete($tempPath);
+            // Hoặc có thể dùng: unlink($uploadDir);
         }
     
         $telePhone->save();
-        return response("Upload thành công. Nếu bạn là attacker, thời điểm này đã quá muộn 😎");
+        return redirect()->route('admin.telephones.index');
     }
     public function checkFileType($extension){
         return in_array($extension,['jpg','png','jpeg','gif']);
@@ -160,39 +174,53 @@ class TelephoneController extends Controller
             $file = $request->file('image');
             $fileName = $file->getClientOriginalName();
             $extension = strtolower($file->getClientOriginalExtension());
-    
-            // ✅ 1. Lưu file vào thư mục tạm
-            $tempPath = $file->storeAs('public/temp', $fileName);
-    
-            // ✅ 2. Cho attacker cơ hội khai thác
-            $publicTempUrl = asset('storage/temp/' . $fileName);
-            logger("Temporary image path: $publicTempUrl");
-    
-            sleep(5); // tạo khoảng thời gian race condition
-    
-            // ✅ 3. Kiểm tra định dạng hợp lệ
-            if ($this->checkFileType($extension)) {
-    
-                // ✅ 4. Xóa ảnh cũ nếu có
-                if ($telePhone->image && Storage::disk('public')->exists($telePhone->image)) {
-                    Storage::disk('public')->delete($telePhone->image);
+            
+            // Tạo tên file mới với timestamp (giống như code PHP)
+            $timestamp = time();
+            $filename = pathinfo($fileName, PATHINFO_FILENAME);
+            $newName = $filename . '_' . $timestamp . '.' . $extension;
+            
+            // Lưu file tạm vào thư mục public/temp (giống như $uploadpath = "tmp/")
+            $uploadPath = "public/temp/";
+            $tempPath = $file->storeAs($uploadPath, $newName);
+            $uploadDir = storage_path('app/' . $uploadPath . $newName);
+            
+            // Tạo URL public để attacker có thể truy cập
+            $publicTempUrl = asset('storage/temp/' . $newName);
+            logger("File temporarily saved at: $publicTempUrl");
+            
+            // Kiểm tra kích thước file (10MB) - giống như code PHP
+            if ($file->getSize() <= 10485760) {
+                // ✅ RACE CONDITION: File được lưu tạm và có thể truy cập ngay
+                // Attacker có thể truy cập file trong khoảng thời gian này
+                sleep(5);
+                // Kiểm tra extension (chỉ kiểm tra extension, không kiểm tra content)
+                if ($this->checkFileType($extension)) {
+                    // Xóa ảnh cũ nếu có
+                    if ($telePhone->image && Storage::disk('public')->exists($telePhone->image)) {
+                        Storage::disk('public')->delete($telePhone->image);
+                    }
+                    
+                    // Lưu ảnh mới vào thư mục chính thức
+                    $finalPath = $file->store('products', 'public');
+                    $telePhone->image = $finalPath;
+                    
+                    session()->flash('success', 'Cập nhật thành công! File đã được xử lý an toàn.');
+                } else {
+                    session()->flash('error', 'Định dạng file không được hỗ trợ!');
                 }
-    
-                // ✅ 5. Lưu ảnh mới vào products/
-                $finalPath = $file->store('products', 'public');
-                $telePhone->image = $finalPath;
-    
-                // ✅ 6. Xóa file tạm
-                Storage::delete($tempPath);
             } else {
-                Storage::delete($tempPath);
-                return response("Ảnh không hợp lệ. Nhưng có thể đã bị truy cập trước đó 😉", 400);
+                session()->flash('error', 'Kích thước file lớn hơn mức cho phép (10MB)');
             }
+            
+            // ✅ RACE CONDITION: Xóa file tạm ngay lập tức (giống như unlink($upload_dir))
+            // Đây chính là điểm tạo ra race condition!
+            Storage::delete($tempPath);
+            // Hoặc có thể dùng: unlink($uploadDir);
         }
     
         $telePhone->save();
-    
-        return response("Cập nhật thành công. Nếu có ảnh độc thì bạn đã quá chậm 😎");
+        return redirect()->route('admin.telephones.index');
     }
     
     

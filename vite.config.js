@@ -11,4 +11,12 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    // server: {
+    //     host: '0.0.0.0', // Cho phép truy cập từ các IP khác
+    //     port: 5173,      // Có thể đổi nếu muốn
+    //     strictPort: true,
+    //     hmr: {
+    //         host:'192.168.0.205', // IP LAN của bạn
+    //     },
+    // },
 });
