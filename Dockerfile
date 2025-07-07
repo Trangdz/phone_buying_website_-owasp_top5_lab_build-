@@ -15,7 +15,9 @@ RUN apk update && \
         git \
         unzip\
         bash \
-        dos2unix 
+        dos2unix \
+        nodejs \
+        npm
 
 RUN docker-php-ext-install pdo pdo_mysql
 RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
@@ -33,5 +35,9 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY docker-start.sh /var/www/
 
 RUN chmod +x /var/www/docker-start.sh
+
+# Cài đặt Node.js và npm để build frontend assets cho Laravel UI Auth
+RUN npm install \
+    && npm run build
 
 CMD ["/var/www/docker-start.sh"]
