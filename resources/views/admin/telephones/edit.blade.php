@@ -5,10 +5,17 @@
     <h2>Product Edit</h2>
 
     
+            @if (!empty($telephone->image))
             <div>
                 <strong>Ảnh đã tải lên:</strong><br>
-                <img src="{{ asset('storage/' . $telephone->image) }}" alt="Uploaded Image" width="200">
+                <img src="{{ asset('storage/' . $telephone->image) }}" alt="Uploaded Image" width="200" style="border: 1px solid #ddd; padding: 5px;">
+                <br><small class="text-muted">Đường dẫn: {{ $telephone->image }}</small>
             </div>
+            @else
+            <div>
+                <strong>Chưa có ảnh nào được tải lên</strong>
+            </div>
+            @endif
        
    
 
@@ -34,17 +41,14 @@
             <label for="brand" class="form-label">Select brand</label>
            <select name="brand"  class="form-select" required>
             <option value="0" disabled {{old('brand')==0? 'selected':''}}>Choose brand</option>
-            <option value="1" {{$telephone->id ==1? 'selected':''}}>Samsung</option>
-            <option value="2" {{$telephone->id ==2? 'selected':''}}>Apple</option>
-            <option value="3" {{$telephone->id ==3? 'selected':''}}>Xiaomi</option>
-            <option value="4" {{$telephone->id ==4? 'selected':''}}>Oppo</option>
+            <option value="1" {{$telephone->brandId ==1? 'selected':''}}>Samsung</option>
+            <option value="2" {{$telephone->brandId ==2? 'selected':''}}>Apple</option>
+            <option value="3" {{$telephone->brandId ==3? 'selected':''}}>Xiaomi</option>
+            <option value="4" {{$telephone->brandId ==4? 'selected':''}}>Oppo</option>
            </select>
             @error('brand') <small class="text-danger">{{ $message }}</small> @enderror
         </div>
-        <div class="mb-3">
-            <label for="brand" class="form-label">Brand</label>
-            <input type="text" class="form-control" id="brand" name="brand" value="{{ old('brand', $telephone->brandId) }}">
-        </div>
+
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea class="form-control" id="description" name="description" rows="5">{{ old('description', $telephone->description) }}</textarea>
