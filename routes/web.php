@@ -17,6 +17,25 @@ use App\Http\Controllers\Admin\UserController as ManagementUserController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Test HTTPS configuration
+Route::get('/test-https', function () {
+    return response()->json([
+        'is_secure' => request()->isSecure(),
+        'secure' => request()->secure(),
+        'https_server_param' => $_SERVER['HTTPS'] ?? 'not set',
+        'x_forwarded_proto' => $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? 'not set',
+        'url' => request()->url(),
+        'full_url' => request()->fullUrl(),
+        'scheme' => request()->getScheme(),
+        'all_server_vars' => [
+            'HTTPS' => $_SERVER['HTTPS'] ?? 'not set',
+            'HTTP_X_FORWARDED_PROTO' => $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? 'not set',
+            'SERVER_PORT' => $_SERVER['SERVER_PORT'] ?? 'not set',
+            'REQUEST_SCHEME' => $_SERVER['REQUEST_SCHEME'] ?? 'not set',
+        ]
+    ]);
+});
 // Route::get('/ssti-demo', [DemoSSTIController::class, 'showForm']);
 // Route::post('/ssti-demo', [DemoSSTIController::class, 'renderTemplate']);
 Auth::routes();
